@@ -20,7 +20,6 @@
             padding: 20px;
         }
         
-        /* Phong bì thư màu Đỏ quyến rũ */
         #envelope { 
             width: 320px; 
             height: 220px; 
@@ -39,7 +38,6 @@
         #envelope:hover { transform: scale(1.05); }
         #envelope.opened { opacity: 0; pointer-events: none; transform: scale(0.8); }
         
-        /* Khung chứa nội dung thiệp */
         #content { 
             position: absolute; 
             text-align: center; 
@@ -59,7 +57,6 @@
         }
         #content.show { opacity: 1; transform: translateY(0); pointer-events: auto; }
         
-        /* Khung trình chiếu ảnh */
         .img-container {
             position: relative;
             width: 100%;
@@ -79,7 +76,6 @@
             transition: opacity 0.4s ease;
         }
         
-        /* Nút chuyển ảnh trước/sau */
         .nav-btn {
             position: absolute;
             top: 50%;
@@ -113,7 +109,6 @@
         #content p { font-size: 16px; line-height: 1.6; color: #ffcccc; margin-bottom: 15px; }
         #content .sender { font-weight: bold; font-size: 16px; color: #ffffff; text-align: right; font-style: italic; }
         
-        /* Hiệu ứng trái tim bay */
         .heart { 
             position: absolute; color: #cc0000; font-size: 24px; 
             animation: floatUp 5s linear infinite; opacity: 0.7; z-index: 1;
@@ -127,14 +122,11 @@
 </head>
 <body>
 
-    <!-- Phong bì thư -->
     <div id="envelope">Bấm vào đây để mở thư ❤️</div>
 
-    <!-- Nội dung thiệp -->
     <div id="content">
-        <!-- Khung hiển thị slide 5 ảnh -->
         <div class="img-container">
-            <img id="slideshow-img" src="1.jpg" alt="Ảnh kỷ niệm">
+            <img id="slideshow-img" src="1.jpeg" alt="Ảnh kỷ niệm">
             <button class="nav-btn prev-btn" onclick="changeImage(-1)">❮</button>
             <button class="nav-btn next-btn" onclick="changeImage(1)">❯</button>
             <div class="img-counter" id="counter">1 / 5</div>
@@ -146,21 +138,11 @@
     </div>
 
     <script>
-        // Danh sách 5 ảnh
-        const images = ["1.jpg", "2.jpg", "3.jpg", "4.jpg", "5.jpg"];
+        const images = ["1.jpeg", "2.jpeg", "3.jpeg", "4.jpeg", "5.jpeg"];
         let currentIndex = 0;
 
         const slideImg = document.getElementById('slideshow-img');
         const counter = document.getElementById('counter');
-
-        // Tự động xử lý nếu file ảnh đuôi viết hoa (.JPG) hay viết thường (.jpg)
-        slideImg.onerror = function() {
-            if (this.src.endsWith('.jpg')) {
-                this.src = this.src.slice(0, -4) + '.JPG';
-            } else if (this.src.endsWith('.JPG')) {
-                this.src = this.src.slice(0, -4) + '.jpg';
-            }
-        };
 
         function changeImage(direction) {
             currentIndex += direction;
@@ -175,14 +157,12 @@
             }, 200);
         }
 
-        // Tự động chuyển ảnh sau mỗi 4 giây khi đã mở thư
         setInterval(() => {
             if (document.getElementById('content').classList.contains('show')) {
                 changeImage(1);
             }
         }, 4000);
 
-        // Mở phong bì thư
         const envelope = document.getElementById('envelope');
         const content = document.getElementById('content');
 
@@ -193,7 +173,6 @@
             }, 500);
         });
 
-        // Hiệu ứng trái tim bay lơ lửng
         function createHeart() {
             const heart = document.createElement('div');
             heart.innerHTML = '❤️';
