@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gửi Hiên 20/10</title>
+    <style>
+        * { box-sizing: border-box; }
+        body { 
+            margin: 0; 
+            overflow-x: hidden; 
+            background-color: #1a1a1a; 
+            color: white; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            min-height: 100vh; 
+            position: relative;
+            padding: 20px;
+        }
+        
+        /* Phong bì thư màu Đỏ quyến rũ */
+        #envelope { 
+            width: 320px; 
+            height: 220px; 
+            background: linear-gradient(135deg, #cc0000, #800000); 
+            border-radius: 12px; 
+            cursor: pointer; 
+            position: relative; 
+            text-align: center; 
+            line-height: 220px; 
+            font-size: 20px; 
+            font-weight: bold; 
+            box-shadow: 0 10px 30px rgba(204,0,0,0.5); 
+            z-index: 10; 
+            transition: all 0.5s ease;
+        }
+        #envelope:hover { transform: scale(1.05); }
+        #envelope.opened { opacity: 0; pointer-events: none; transform: scale(0.8); }
+        
+        /* Khung chứa nội dung thiệp */
+        #content { 
+            position: absolute; 
+            text-align: center; 
+            opacity: 0; 
+            transform: translateY(30px); 
+            transition: all 0.8s ease-out; 
+            z-index: 5; 
+            pointer-events: none; 
+            width: 100%; 
+            max-width: 420px;
+            background: rgba(30, 30, 30, 0.9);
+            backdrop-filter: blur(8px);
+            padding: 25px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 102, 102, 0.3);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+        }
+        #content.show { opacity: 1; transform: translateY(0); pointer-events: auto; }
+        
+        /* Khung trình chiếu ảnh */
+        .img-container {
+            position: relative;
+            width: 100%;
+            height: 320px;
+            overflow: hidden;
+            border-radius: 12px;
+            border: 3px solid #cc0000;
+            margin-bottom: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            background-color: #000;
+        }
+        .img-container img { 
+            width: 100%; 
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: opacity 0.4s ease;
+        }
+        
+        /* Nút chuyển ảnh trước/sau */
+        .nav-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.6);
+            color: white;
+            border: none;
+            font-size: 18px;
+            padding: 10px 14px;
+            cursor: pointer;
+            border-radius: 50%;
+            user-select: none;
+            transition: background 0.3s;
+        }
+        .nav-btn:hover { background: rgba(204, 0, 0, 0.8); }
+        .prev-btn { left: 10px; }
+        .next-btn { right: 10px; }
+        
+        .img-counter {
+            position: absolute;
+            bottom: 8px;
+            right: 12px;
+            background: rgba(0, 0, 0, 0.6);
+            color: #ffcccc;
+            font-size: 12px;
+            padding: 3px 8px;
+            border-radius: 10px;
+        }
+
+        #content h2 { color: #ff6666; margin: 10px 0; font-size: 22px; }
+        #content p { font-size: 16px; line-height: 1.6; color: #ffcccc; margin-bottom: 15px; }
+        #content .sender { font-weight: bold; font-size: 16px; color: #ffffff; text-align: right; font-style: italic; }
+        
+        /* Hiệu ứng trái tim bay */
+        .heart { 
+            position: absolute; color: #cc0000; font-size: 24px; 
+            animation: floatUp 5s linear infinite; opacity: 0.7; z-index: 1;
+            pointer-events: none;
+        }
+        @keyframes floatUp { 
+            0% { transform: translateY(100vh) scale(0.5) rotate(0deg); opacity: 1; } 
+            100% { transform: translateY(-100px) scale(1.5) rotate(360deg); opacity: 0; } 
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Phong bì thư -->
+    <div id="envelope">Bấm vào đây để mở thư ❤️</div>
+
+    <!-- Nội dung thiệp -->
+    <div id="content">
+        <!-- Khung hiển thị slide 5 ảnh -->
+        <div class="img-container">
+            <img id="slideshow-img" src="1.jpg" alt="Ảnh kỷ niệm">
+            <button class="nav-btn prev-btn" onclick="changeImage(-1)">❮</button>
+            <button class="nav-btn next-btn" onclick="changeImage(1)">❯</button>
+            <div class="img-counter" id="counter">1 / 5</div>
+        </div>
+
+        <h2>Gửi Hien người con gái anh biết</h2>
+        <p>Anh không biết nói gì nhiều, chúc em mọi điều.</p>
+        <div class="sender">- Từ: Người nào đó -</div>
+    </div>
+
+    <script>
+        // Danh sách 5 ảnh
+        const images = ["1.jpg", "2.jpg", "3.jpg", "4.jpg", "5.jpg"];
+        let currentIndex = 0;
+
+        const slideImg = document.getElementById('slideshow-img');
+        const counter = document.getElementById('counter');
+
+        // Tự động xử lý nếu file ảnh đuôi viết hoa (.JPG) hay viết thường (.jpg)
+        slideImg.onerror = function() {
+            if (this.src.endsWith('.jpg')) {
+                this.src = this.src.slice(0, -4) + '.JPG';
+            } else if (this.src.endsWith('.JPG')) {
+                this.src = this.src.slice(0, -4) + '.jpg';
+            }
+        };
+
+        function changeImage(direction) {
+            currentIndex += direction;
+            if (currentIndex < 0) currentIndex = images.length - 1;
+            if (currentIndex >= images.length) currentIndex = 0;
+            
+            slideImg.style.opacity = 0;
+            setTimeout(() => {
+                slideImg.src = images[currentIndex];
+                counter.innerText = (currentIndex + 1) + " / " + images.length;
+                slideImg.style.opacity = 1;
+            }, 200);
+        }
+
+        // Tự động chuyển ảnh sau mỗi 4 giây khi đã mở thư
+        setInterval(() => {
+            if (document.getElementById('content').classList.contains('show')) {
+                changeImage(1);
+            }
+        }, 4000);
+
+        // Mở phong bì thư
+        const envelope = document.getElementById('envelope');
+        const content = document.getElementById('content');
+
+        envelope.addEventListener('click', () => {
+            envelope.classList.add('opened');
+            setTimeout(() => {
+                content.classList.add('show');
+            }, 500);
+        });
+
+        // Hiệu ứng trái tim bay lơ lửng
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.innerHTML = '❤️';
+            heart.classList.add('heart');
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.animationDuration = (Math.random() * 3 + 3) + 's';
+            document.body.appendChild(heart);
+            setTimeout(() => heart.remove(), 6000);
+        }
+        setInterval(createHeart, 400);
+    </script>
+</body>
+</html>
